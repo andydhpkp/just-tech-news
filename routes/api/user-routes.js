@@ -6,6 +6,7 @@ router.get('/', (req, res) => {
     //Access our User model and run .findAll() method
     ///.findAll() is one of the Sequelize Model class's methods that lets us query all of the users from the user table in the database, and is the JS equivalent of 'SELECT * FROM users;'
     User.findAll({
+        //STORING A PASSWORD AS-S IN A DATABASE IS A BAD IDEA
         //excludes the password column, it is an array because if we want to exclude more than one, we can just add more
         attributes: { exclude: ['password']}
     })
@@ -21,7 +22,7 @@ router.get('/:id', (req, res) => {
     //documentation on model usage and querying: https://sequelize.org/v5/manual/models-usage.html#data-retrieval---finders  https://sequelize.org/v5/manual/querying.html
     //findONe() is another of the model class's methods
     User.findOne({
-        attributes: { exclude: ['password']}
+        attributes: { exclude: ['password']},
         //the where option to indicate we want to find a user where its id value equals whatever req.params.id is, much like 'SELECT * FROM users WHERE id = 1'
         where: {
             id: req.params.id
