@@ -58,12 +58,14 @@ router.post('/', (req, res) => {
 });
 
 //PUT /api/users/1
-router.post('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     //expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
 
     //This update() method combines the parameters for creating data and looking up data. We pass in req.body to provide the new data we want to use in the update and req.params.id to indicate where exactly we want that new data to be used. SQL = 'UPDATE users SET username = "lernantino", email = "lernantino@gmail.com", password = "newPassword1234" WHERE id = 1;'
     //if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
     User.update(req.body, {
+        //add this to check if the hook update is effective
+        individualHooks: true,
         where: {
             id: req.params.id
         }

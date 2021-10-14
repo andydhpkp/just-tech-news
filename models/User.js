@@ -58,10 +58,16 @@ User.init(
         hooks: {
             //set up beforeCreate lifecycle "hook" functionality
             //userData and newUserData are two created local variables for pre-hash and post-hash data
-            async beforeCreate(userData) {
+            async beforeCreate(newUserData) {
                 //the second parameter is the saltRounds parameter is known as the cost factor and controls how many rounds of hashing are done by the bcrypt algorithm
-                newUserData.password = await bcrypt.hash(userData.password, 10)
+                newUserData.password = await bcrypt.hash(newUserData.password, 10)
                 return newUserData
+            },
+            //set up beforeUpdate lifecycle "hook" functionality so a user can change a password and it will be hashed
+            ///https://sequelize.org/v5/manual/hooks.html
+            async beforeUpdate(updatedUserUpdate) {
+                updatedUserUpdate.password = await bcrypt.hash(updatedUserUpdate.password, 10)
+                return updatedUserUpdate
             }
         },
         //TABLE CONFIGURATION OPTIONS GO HERE (https://sequelize.org/v5/manual/models-definition.html#configuration))
