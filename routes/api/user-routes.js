@@ -57,6 +57,38 @@ router.post('/', (req, res) => {
         })
 });
 
+//POST route for login
+router.post('/login', (req, res) => {
+    //expects {email: 'lernantino@gmail.com', password: 'password1234'}
+    //Queried the User table using the findOne() for the email entered by the user and assigned it to req.body.email
+    /*
+    The .findOne() Sequelize method looks for a user with the specified email. The result of the query is passed as dbUserData to the .then() part of the .findOne() method. 
+    If the query result is successful (i.e., not empty), we can call .checkPassword(), which will be on the dbUserData object. We'll need to pass the plaintext password, which is stored in req.body.password, 
+    into .checkPassword() as the argument.
+    The .compareSync() method, which is inside the .checkPassword() method, can then confirm or deny that the supplied password matches the hashed password stored on the object. 
+    .checkPassword() will then return true on success or false on failure. We'll store that boolean value to the variable validPassword.
+    */
+    User.findOne({
+        where: {
+            email: req.body.email
+        }
+    }).then(dbUserData => {
+        if (!dbUserData) {
+            res.status(400).json({ message: 'No user with that email address! '})
+            return
+        }
+        //Verify user
+        //the checkPassword() is added to the User.js
+        const validPassword = dbUserData.checkPassword(req.body.password)
+        if(!validPassword) {
+            res.status(400).json({ message: 'Incorrect password!' })
+            return
+        }
+
+        res.json({ user: dbUserData, message: 'You are now logged in!' })
+    })
+})
+
 //PUT /api/users/1
 router.put('/:id', (req, res) => {
     //expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
