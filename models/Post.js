@@ -3,7 +3,29 @@ const sequelize = require('../config/connection')
 
 //Create our Post model
 class Post extends Model {
-
+    //Sequelize method to replace busy code
+    static upvote(body, models){
+        return models.Vote.create({
+            user_id: body.user_id,
+            post_id: body.post_id
+        }).then(() => {
+            return Post.findOne({
+                where: {
+                    id: body.post_id
+                },
+                attributes: [
+                    'id',
+                    'post_url',
+                    'title',
+                    'created_at',
+                    [
+                    sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'),
+                    'vote_count'
+                    ]
+                ]
+            });
+        });
+    }
 }
 
 //create fields/columns for Post model (more in depth in User.js)
