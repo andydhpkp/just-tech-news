@@ -7,6 +7,8 @@ router.get('/', (req, res) => {
     console.log('=================')
     Post.findAll({
         attributes: ['id', 'post_url', 'title', 'created_at'],
+        //order the results numerically
+        order: [['created_at', 'DESC']],
         //This is how we JOIN the table
         include: [
             {
@@ -47,6 +49,63 @@ router.get('/:id', (req, res) => {
         res.status(500).json(err);
     });
 });
-  
+
+//post route
+router.post('/', (req, res) => {
+    Post.create({
+        title: req.body.title,
+        post_url: req.body.post_url,
+        user_id: req.body.user_id
+    }).then(dbPostData => res.json(dbPostData))
+    .catch(err => {
+        console.log(err)
+        res.status(500).json(err)
+    })
+})
+
+//put route
+router.put('/:id', (req, res) => {
+    Post.update(
+      {
+        title: req.body.title
+      },
+      {
+        where: {
+          id: req.params.id
+        }
+      }
+    )
+    .then(dbPostData => {
+        if (!dbPostData) {
+          res.status(404).json({ message: 'No post found with this id' });
+          return;
+        }
+        res.json(dbPostData);
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+    });
+});
+
+//delete route
+router.delete('/:id', (req, res) => {
+    Post.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
+    .then(dbPostData => {
+        if (!dbPostData) {
+          res.status(404).json({ message: 'No post found with this id' });
+          return;
+        }
+        res.json(dbPostData);
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+    });
+});
 
 module.exports = router
