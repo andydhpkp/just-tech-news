@@ -2,6 +2,8 @@
 ///the model class in Sequelize allows us to create our own JS class and define the columns, data types, and any other rules we need the data to adhere to for SQL
 const { Model, DataTypes } = require('sequelize')
 const sequelize = require('../config/connection')
+//npm i bcrypt for password hash https://www.npmjs.com/package/bcrypt
+const bcrypt = require('bcrypt')
 
 //create our User model
 ///we import the model class and DataTypes object from Sequelize. This model class is what we create our own models from using the extends keyword so User inherits all of the functionality the Model class has
@@ -52,6 +54,16 @@ User.init(
         }
     },
     {
+        //use hooks from Sequelize to create hashed password
+        hooks: {
+            //set up beforeCreate lifecycle "hook" functionality
+            //userData and newUserData are two created local variables for pre-hash and post-hash data
+            async beforeCreate(userData) {
+                //the second parameter is the saltRounds parameter is known as the cost factor and controls how many rounds of hashing are done by the bcrypt algorithm
+                newUserData.password = await bcrypt.hash(userData.password, 10)
+                return newUserData
+            }
+        },
         //TABLE CONFIGURATION OPTIONS GO HERE (https://sequelize.org/v5/manual/models-definition.html#configuration))
 
         //pass in our imported sequelize connection (the direct connection to our database)
