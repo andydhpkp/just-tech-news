@@ -1,6 +1,6 @@
 const router = require('express').Router()
 //We include the User model for the post-routes because we would like to retrieve not only the post but the user who posted it
-const { User, Post, Vote } = require("../../models");
+const { User, Post, Vote, Comment } = require("../../models");
 //in order to call Sequelize functionality with the upvote route
 const sequelize = require('../../config/connection')
 
@@ -13,6 +13,15 @@ router.get('/', (req, res) => {
         order: [['created_at', 'DESC']],
         //This is how we JOIN the table
         include: [
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                include: {
+                    //this is to attach username to a comment
+                    model: User,
+                    attributes: ['username']
+                }
+            },
             {
                 model: User,
                 attributes: ['username']
@@ -33,6 +42,15 @@ router.get('/:id', (req, res) => {
         },
         attributes: ['id', 'post_url', 'title', 'created_at', [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']],
         include: [
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                include: {
+                    //this is to attach username to a comment
+                    model: User,
+                    attributes: ['username']
+                }
+            },
             {
                 model: User,
                 attributes: ['username']
