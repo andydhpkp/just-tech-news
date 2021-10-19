@@ -1,0 +1,20 @@
+<!-- THE STRUCTURE MUST BE SET UP THIS WAY TO WORK. YOU WILL ALWAYS HAVE A MAIN LAYOUT LOCATED AT (AND NAMED) views/layouts/main.handlebars ALL OTHER TEMPLATE FILES WILL GO DIRECTLY IN THE views FOLDER (views/welcome.handlebars) -->
+<ol class="post_list">
+    <!-- any html between the #each and /each will be repeated for every item in posts -->
+    {{#each posts as |post|}}
+    <li>
+        <article class="post">
+            <div class="title">
+                <a href="{{post_url}}" target="_blank">{{title}}</a>
+                <span>({{post_url}})</span>
+            </div>
+            <div class="meta">
+                <!--three curly brackets as {{{ body }}} renders the data as HTML, two brackets {{vote_count}} renders the data characters as strings-->
+                {{post.vote_count}} point(s) by {{post.user.username}} on {{post.created_at}}
+                |
+                <a href="/post/{{id}}">{{post.comments.length}} comment(s)</a>
+            </div>
+        </article>
+    </li>
+    {{/each}}
+</ol>
