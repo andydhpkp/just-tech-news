@@ -6,6 +6,7 @@ const { Post, User, Comment } = require('../models')
 
 //add some data to the homepage
 router.get('/', (req, res) => {
+    console.log(req.session)
     Post.findAll({
         attributes: [
             'id',
@@ -39,6 +40,17 @@ router.get('/', (req, res) => {
         console.log(err);
         res.status(500).json(err)
     })
+})
+
+//login route
+router.get('/login', (req, res) => {
+    //redirects you to homepage if already logged in
+    if(req.session.loggedIn) {
+        res.redirect('/')
+        return
+    }
+
+    res.render('login')
 })
 
 module.exports = router
